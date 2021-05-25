@@ -1,10 +1,13 @@
 # Default values for radondb-mysql.
 # This is a YAML-formatted file.
+# values.yml是chart要用到的大部分的配置
 # Declare variables to be passed into your templates.
 
 ## Specify an imagePullPolicy (Required)
 ## It's recommended to change this to 'Always' if the image tag is 'latest'
 ## ref: http://kubernetes.io/docs/user-guide/images/#updating-images
+#  Always: 不管本地有没有，都要从远端去拉镜像，IfNotPresent: 本地有的话就不从远端拉, Never: 只从本地拉，不从远端拉
+#  这里ppt讲的时候可以挑几个重点画个表格
 ## Always IfNotPresent Never
 imagePullPolicy: IfNotPresent
 
@@ -46,6 +49,7 @@ mysql:
       default_storage_engine=InnoDB
       max_connections=65535
 
+# 这两个探针忘记啥意思了...需要确认下
   livenessProbe:
     initialDelaySeconds: 30
     periodSeconds: 10

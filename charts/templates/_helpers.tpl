@@ -3,7 +3,7 @@
 Expand the name of the chart.
 */}}
 {{- define "name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}} /*helm 的函数, 这里有个问题,我们Values对应的values.yaml,而不是大写的*/
 {{- end -}}
 
 {{/*
@@ -21,6 +21,7 @@ so the length of "fullname" must be limited to '(60-4-len(namespace))/2'.
 {{- if contains $name .Release.Name -}}
 {{- .Release.Name | trunc $length | trimSuffix "-" -}}
 {{- else -}}
+// gry 这里就是release-name由来: demo-radondb-mysql,然后pod生成后加后缀:0,1,2
 {{- printf "%s-%s" .Release.Name $name | trunc $length | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}

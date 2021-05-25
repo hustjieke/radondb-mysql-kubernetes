@@ -8,10 +8,13 @@ metadata:
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
 data:
+# toYaml是helm的函数,将文件转换成yaml格式
 {{ toYaml .Values.mysql.configFiles | indent 2 }}
+# server-id单独定义是因为在一个mysql集群里面, 每一个server-id都是不一样的,所以要对每一个mysql单独生成
   server-id.cnf: |
     [mysqld]
     server-id=@@SERVER_ID@@
+# 这个是xenon要用到的,可以参看helm get all demo展开的描述
   create-peers.sh: |
     #!/bin/sh
     set -eu
@@ -26,11 +29,13 @@ data:
       fi
       i=$((i+1))
     done
+# leader节点调用
   leader-start.sh: |
     #!/usr/bin/env bash
     curl -X PATCH -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -H "Content-Type: application/json-patch+json" \
     --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/{{ .Release.Namespace }}/pods/$HOSTNAME \
     -d '[{"op": "replace", "path": "/metadata/labels/role", "value": "leader"}]'
+# bug:这里应该改为follower start吧，跟plus的场景逻辑不一样, follower节点调用
   leader-stop.sh: |
     #!/usr/bin/env bash
     curl -X PATCH -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -H "Content-Type: application/json-patch+json" \

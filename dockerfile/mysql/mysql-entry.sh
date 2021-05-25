@@ -1,10 +1,17 @@
 #!/bin/bash
+# 遇到错误就退出
+# 这个文件好多地方没有注释, 对开源不友好,好多地方别人看不懂
+# 这个文件说白了就是初始化mysql数据目录,启动mysqld,做一些初始化操作,创建需要用到的用户...
+# 写ppt的时候可以截图,列出启动成功后的日志
+# 这里ppt不用讲太多,分享一下思路就好,然后日志,前面的dockerfile需要详细讲讲,画流程图
 set -e
 
 # usage: file_env VAR [DEFAULT]
+# 如果环境变量没有设置，就用default来代替
 #	ie: file_env 'XYZ_DB_PASSWORD' 'example'
 # (will allow for "$XYZ_DB_PASSWORD_FILE" to fill in the value of
 #  "$XYZ_DB_PASSWORD" from a file, especially for Docker's secrets feature)
+# file_env的作用是:将不建议mysql用户密码放到环境变量,而是文件里面,然后挂载上去
 file_env() {
 	local var="$1"
 	local fileVar="${var}_FILE"
@@ -28,6 +35,7 @@ file_env() {
 # (process a single initializer file, based on its extension. we define this
 # function here, so that initializer scripts (*.sh) can use the same logic,
 # potentially recursively, or override the logic used in subsequent calls)
+# 做一些初始化的操作，跑sql脚本啥的，这个好像没用到，不管
 process_init_file() {
 	local f="$1"; shift
 	local mysql=( "$@" )
@@ -44,6 +52,7 @@ process_init_file() {
 # Fetch value from server config
 # We use mysqld --verbose --help instead of my_print_defaults because the
 # latter only show values present in config files, and not server defaults
+# 获取mysql变量,相当于show variables  like ....
 _get_config() {
 	local conf="$1";
 	"mysqld" --verbose --help --log-bin-index="$(mktemp -u)" 2>/dev/null \
@@ -83,7 +92,7 @@ if [ ! -d "$DATADIR/mysql" ]; then
 		if echo 'SELECT 1' | "${mysql[@]}" &> /dev/null; then
 			break
 		fi
-		echo 'MySQL init process in progress...'
+		echo 'MySQL init process in progress...' # bug:这里输出日志有问题吧。
 		sleep 1
 	done
 	if [ "$i" = 0 ]; then
@@ -163,4 +172,5 @@ echo
 echo 'MySQL init process done.'
 echo
 
+# 执行dock-entry.sh mysqld？
 exec "$@"

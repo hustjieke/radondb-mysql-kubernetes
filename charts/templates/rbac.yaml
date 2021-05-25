@@ -13,10 +13,12 @@ rules:
     - ""
   resources:
     - pods
+      # 权限：获取和更新，这个更新就是刚刚的改lable要用的
   verbs:
     - get
     - patch
 ---
+# 绑定,这样调用的时候就有权限去操作
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:

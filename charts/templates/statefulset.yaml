@@ -25,6 +25,7 @@ spec:
       labels:
         app: {{ template "fullname" . }}
         release: {{ .Release.Name }}
+        # 默认都是这个角色, 后面会去更改
         role: candidate
         {{- with .Values.podLabels }}
 {{ toYaml . | indent 8 }}
@@ -51,6 +52,7 @@ spec:
             # Generate mysql server-id from pod ordinal index.
             ordinal=$(echo $(hostname) | tr -cd "[0-9]")
             # Copy server-id.conf adding offset to avoid reserved server-id=0 value.
+            # 替换configmap里面的server-id
             cat /mnt/config-map/server-id.cnf | sed s/@@SERVER_ID@@/$((100 + $ordinal))/g > /mnt/conf.d/server-id.cnf
             # Copy appropriate conf.d files from config-map to config mount.
             cp -f /mnt/config-map/node.cnf /mnt/conf.d/
