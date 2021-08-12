@@ -1,0 +1,6 @@
+domain: radondb.com
+layout:
+- go.kubebuilder.io/v3
+projectName: radondb-mysql-kubernetes
+repo: github.com/radondb/radondb-mysql-kubernetes
+version: "3"
