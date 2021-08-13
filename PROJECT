@@ -3,4 +3,14 @@ layout:
 - go.kubebuilder.io/v3
 projectName: radondb-mysql-kubernetes
 repo: github.com/radondb/radondb-mysql-kubernetes
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: radondb.com
+  group: mysql
+  kind: Cluster
+  path: github.com/radondb/radondb-mysql-kubernetes/api/v1alpha1
+  version: v1alpha1
 version: "3"
