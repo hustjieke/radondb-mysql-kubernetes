@@ -23,6 +23,7 @@ import (
 	"github.com/radondb/radondb-mysql-kubernetes/sidecar"
 )
 
+// gry:参考cmd/mysql-operator-sidecar/main.go
 const (
 	// The name of the sidecar.
 	sidecarName = "sidecar"
