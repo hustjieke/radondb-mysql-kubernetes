@@ -10,6 +10,7 @@ require (
 	github.com/onsi/gomega v1.13.0
 	github.com/presslabs/controller-util v0.3.0
 	github.com/spf13/cobra v1.1.1
+	github.com/stretchr/testify v1.7.0
 	k8s.io/api v0.21.2
 	k8s.io/apimachinery v0.21.2
 	k8s.io/client-go v0.21.2

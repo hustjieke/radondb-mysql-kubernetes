@@ -70,10 +70,11 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	log := log.FromContext(ctx).WithName("controllers").WithName("Cluster")
 	instance := cluster.New(&apiv1alpha1.Cluster{})
 
-	// gry: 这个是自己加的
+	// gry(TODO): 这个是自己加的,我们要加这个逻辑?
+	err := r.Get(ctx, req.NamespacedName, instance.Unwrap())
 	if err != nil {
 		if errors.IsNotFound(err) {
-			// Object not found, return.  Created objects are automatically garbage collected.
+			// Object not found, return. Created objects are automatically garbage collected.
 			// For additional cleanup logic use finalizers.
 			log.Info("instance not found, maybe removed")
 			return ctrl.Result{}, nil
