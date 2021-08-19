@@ -40,7 +40,8 @@ import (
 // ClusterReconciler reconciles a Cluster object
 type ClusterReconciler struct {
 	client.Client
-	Scheme   *runtime.Scheme
+	Scheme *runtime.Scheme
+	// gry: 参看https://zhuanlan.zhihu.com/p/144978395种对这个event的描述
 	Recorder record.EventRecorder
 }
 

@@ -97,6 +97,32 @@ rules:
   - patch
   - update
 - apiGroups:
+  - mysql.radondb.com
+  resources:
+  - statuses
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - mysql.radondb.com
+  resources:
+  - statuses/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - mysql.radondb.com
+  resources:
+  - statuses/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - rbac.authorization.k8s.io
   resources:
   - rolebindings

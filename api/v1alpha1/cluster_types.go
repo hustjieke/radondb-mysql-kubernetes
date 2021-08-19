@@ -304,6 +304,7 @@ type ClusterStatus struct {
 	Nodes []NodeStatus `json:"nodes,omitempty"`
 }
 
+// gry: https://zhuanlan.zhihu.com/p/144978395, 讲解kubebuilder进阶使用
 // gry(TODO) 这些含义到底是什么呢?copy的presslabs
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status

@@ -33,8 +33,9 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: gry(TODO) 这些含义到底是什么呢?copy的presslabs Cluster is the Schema for
-          the clusters API
+        description: 'gry: https://zhuanlan.zhihu.com/p/144978395, 讲解kubebuilder进阶使用
+          gry(TODO) 这些含义到底是什么呢?copy的presslabs Cluster is the Schema for the clusters
+          API'
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
