@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	// TODO(gry): make sure the default port, do we need it?
+	// TODO(gry):确认下端口
 	defaultHost = "https://127.0.0.1:6443"
 
 	// DefaultNumNodes is the number of nodes. If not specified, then number of nodes is auto-detected
@@ -61,21 +61,40 @@ const (
 // Test suite authors can use framework/viper to make all command line
 // parameters also configurable via a configuration file.
 type TestContextType struct {
+	// Kube config file with path
 	KubeConfig  string
 	KubeContext string
 	Host        string
 
-	OutputDir string
+	OutputDir    string
+	ReportDir    string
+	ReportPrefix string
 
 	// If set to true test will dump data about the namespace in which test was running.
 	DumpLogsOnFailure bool
 	// Disables dumping cluster log from master and nodes after all tests.
 	DisableLogDump bool
 	TimeoutSeconds int
+
+	// SpecSummaryOutput is the file to write ginkgo.SpecSummary objects to as tests complete. Useful for debugging and test introspection.
+	SpecSummaryOutput string
+
+	// ProgressReportURL is the URL which progress updates will be posted to as tests complete. If empty, no updates are sent.
+	ProgressReportURL string
+
+	CleanStart bool
+
+	// The Default IP Family of the cluster ("ipv4" or "ipv6")
+	IPFamily string
 }
 
 // TestContext should be used by all tests to access common context data.
 var TestContext TestContextType
+
+// ClusterIsIPv6 returns true if the cluster is IPv6
+func (tc TestContextType) ClusterIsIPv6() bool {
+	return tc.IPFamily == "ipv6"
+}
 
 // RegisterCommonFlags registers flags common to all e2e test suites.
 // The flag set can be flag.CommandLine (if desired) or a custom
@@ -93,7 +112,12 @@ func RegisterCommonFlags(flags *flag.FlagSet) {
 	flags.StringVar(&TestContext.KubeContext, clientcmd.FlagContext, "", "kubeconfig context to use/override. If unset, will use value from 'current-context'")
 	flags.StringVar(&TestContext.Host, "host", "", fmt.Sprintf("The host, or apiserver, to connect to. Will default to %s if this argument and --kubeconfig are not set.", defaultHost))
 	flags.StringVar(&TestContext.OutputDir, "e2e-output-dir", "/tmp", "Output directory for interesting/useful test data, like performance data, benchmarks, and other metrics.")
+	flags.StringVar(&TestContext.ReportDir, "report-dir", "", "Path to the directory where the JUnit XML reports should be saved. Default is empty, which doesn't generate these reports.")
+	flags.StringVar(&TestContext.ReportPrefix, "report-prefix", "radondb-mysql_", "Optional prefix for JUnit XML reports.")
 	flags.BoolVar(&TestContext.DumpLogsOnFailure, "dump-logs-on-failure", true, "If set to true test will dump data about the namespace in which test was running.")
 	flags.BoolVar(&TestContext.DisableLogDump, "disable-log-dump", false, "If set to true, logs from master and nodes won't be gathered after test run.")
 	flag.IntVar(&TestContext.TimeoutSeconds, "pod-wait-timeout", 100, "Timeout to wait for a pod to be ready.")
+	flags.StringVar(&TestContext.SpecSummaryOutput, "spec-dump", "", "The file to dump all ginkgo.SpecSummary to after tests run. If empty, no objects are saved/printed.")
+	flags.StringVar(&TestContext.ProgressReportURL, "progress-report-url", "", "The URL to POST progress updates to as the suite runs to assist in aiding integrations. If empty, no messages sent.")
+	flags.BoolVar(&TestContext.CleanStart, "clean-start", false, "If true, purge all namespaces except default and system before running tests. This serves to Cleanup test namespaces from failed/interrupted e2e runs in a long-lived cluster.")
 }

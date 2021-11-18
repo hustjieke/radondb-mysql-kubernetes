@@ -41,10 +41,6 @@ help: ## Display this help.
 manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
 	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
 
-update-crd:	## Synchronize the generated YAML files to operator Chart after make manifests.
-	make manifests
-	cp config/crd/bases/* charts/mysql-operator/crds/
-
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 
@@ -119,5 +115,12 @@ endef
 
 # E2E tests
 ###########
+
+KUBECONFIG ?= ~/.kube/config
+K8S_CONTEXT ?= minikube
+
 e2e-local:
-	go test -v ./test/e2e  $(G_ARGS) -timeout 20m
+	go test -v ./test/e2e  $(G_ARGS) -timeout 20m \
+                -ginkgo.slowSpecThreshold 300 \
+                --kubeconfig $(KUBECONFIG) --context $(K8S_CONTEXT) \
+                --report-dir ../../e2e-reports
